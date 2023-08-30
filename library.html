@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <title>Books</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <h1>My Library</h1>
+    <h2>Book List</h2>
+    <div id="bookList"></div>
+    <button id="addNewBook">New Book</button>
+    <div id="overlay"></div>
+    <dialog id="dialog">
+      <form id="form">
+        <label for="name">Book name:</label>
+        <input type="text" name="name" id="name" required />
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author" required />
+        <label for="pages">Pages:</label>
+        <input type="number" name="pages" id="pages" required />
+        <label for="read">Have you read it?</label>
+        <select name="read" id="read" required>
+          <option value="✅">Yes, of course!</option>
+          <option value="❌" selected>Not yet</option>
+        </select>
+        <button id="addButton" type="submit">Add to Library</button>
+      </form>
+    </dialog>
+
+    <script>
+      let myLibrary = [
+        {
+          name: "The Hobbit",
+          author: "J.R.R. Tolkien",
+          pages: 295,
+          read: "❌",
+        },
+        {
+          name: "Harry Potter",
+          author: "J. K. Rowling",
+          pages: 285,
+          read: "✅",
+        },
+      ];
+
+      const bookList = document.getElementById("bookList");
+      const addNewBook = document.getElementById("addNewBook");
+      const dialog = document.getElementById("dialog");
+      const newBookForm = document.getElementById("form");
+      const overlay = document.getElementById("overlay"); //background to be darken on dialog open
+
+      // Function to create a book card
+      function addBookToLibrary(book, index) {
+        const cardDiv = document.createElement("div");
+        cardDiv.innerHTML = `
+          <h2 id="bookName">Book name: ${book.name}</h2>
+          <p class="bookInfo">Author: ${book.author}</p>
+          <p class="bookInfo">Pages: ${book.pages}</p>
+          <p class="bookInfo" id="readStatus">Read: ${book.read}
+            <button class="changeSelectBtns" id="changeBtn${index}">Change</button></p>
+          <button onclick="deleteBook(${index})">🗑️</button>
+        `;
+        return cardDiv;
+      }
+
+      //Change read option on demand
+      function changeOption(index) {
+        const book = myLibrary[index];
+        const currentOption = book.read;
+        if (currentOption === "✅") {
+          book.read = "❌";
+        } else if (currentOption === "❌") {
+          book.read = "✅";
+        }
+        displayBooks();
+      }
+
+      // Display all book cards in the bookList div
+      function displayBooks() {
+        bookList.innerHTML = "";
+
+        myLibrary.forEach((book, index) => {
+          const bookCard = addBookToLibrary(book, index);
+          bookCard.setAttribute("id", "card");
+          bookList.appendChild(bookCard);
+
+          // Trigger function which changes read option in card
+          const changeSelect = document.querySelector(`#changeBtn${index}`);
+          changeSelect.addEventListener("click", () => {
+            changeOption(index);
+          });
+        });
+      }
+
+      // Deletes chosen book card
+      function deleteBook(index) {
+        myLibrary.splice(index, 1);
+        displayBooks();
+      }
+
+      // Open the dialog with new book and also darken background
+      addNewBook.addEventListener("click", () => {
+        dialog.showModal();
+        overlay.style.display = "block";
+      });
+
+      // Send and close the form
+      newBookForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Get values from form
+        const name = document.getElementById("name").value;
+        const author = document.getElementById("author").value;
+        const pages = document.getElementById("pages").value;
+        const read = document.getElementById("read").value;
+
+        // Create new book card
+        const newBook = {
+          name: name,
+          author: author,
+          pages: pages,
+          read: read,
+        };
+        myLibrary.push(newBook);
+        displayBooks();
+
+        // Closes dialog and lighten background
+        dialog.close();
+        overlay.style.display = "none";
+        newBookForm.reset();
+      });
+
+      // Prevent closing the dialog with "esc"
+      dialog.addEventListener("cancel", (e) => {
+        e.preventDefault();
+      });
+      window.onload = displayBooks();
+    </script>
+  </body>
+</html>
