@@ -30,26 +30,25 @@
     </dialog>
 
     <script>
+      class Book {
+        constructor(name, author, pages, read) {
+          this.name = name,
+          this.author = author,
+          this.pages = pages,
+          this.read = read
+        }
+      }
+
       let myLibrary = [
-        {
-          name: "The Hobbit",
-          author: "J.R.R. Tolkien",
-          pages: 295,
-          read: "❌",
-        },
-        {
-          name: "Harry Potter",
-          author: "J. K. Rowling",
-          pages: 285,
-          read: "✅",
-        },
+        new Book ("The Hobbit", "J.R.R. Tolkien", 295, "❌"),
+        new Book ("Harry Potter", "J. K. Rowling", 285, "✅"),
       ];
 
       const bookList = document.getElementById("bookList");
       const addNewBook = document.getElementById("addNewBook");
       const dialog = document.getElementById("dialog");
       const newBookForm = document.getElementById("form");
-      const overlay = document.getElementById("overlay"); //background to be darken on dialog open
+      const overlay = document.getElementById("overlay"); //darken the background on dialog open
 
       // Function to create a book card
       function addBookToLibrary(book, index) {
@@ -117,12 +116,7 @@
         const read = document.getElementById("read").value;
 
         // Create new book card
-        const newBook = {
-          name: name,
-          author: author,
-          pages: pages,
-          read: read,
-        };
+        const newBook = new Book(name, author, pages, read);
         myLibrary.push(newBook);
         displayBooks();
 
